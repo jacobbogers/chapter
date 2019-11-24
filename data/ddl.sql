@@ -131,3 +131,32 @@ create table user_bans
   created_at timestamp default CURRENT_TIMESTAMP,
   updated_at timestamp default CURRENT_TIMESTAMP
 );
+
+create table chapter_emails_endpoints
+(
+    chapter_id uuid references chapters(id),
+    email_contact text not null,
+    primary key(chapters_id, contact_email),
+    contact_descr text not null, -- description for admin config panel 
+    created_at timestamp default CURRENT_TIMESTAMP,
+    updated_at timestamp default CURRENT_TIMESTAMP 
+);
+
+-- outgoing emails created per chapter
+create table emails_sent
+(
+   id uuid,
+   chapter_id uuid references chapters(id),
+   email_sender text, -- address to display as sender 
+   email_reply_to text, -- address to put in the reply too field
+   primary_key(uuid),
+   FOREIGN KEY (chapter_id, email_sender) REFERENCES chapter_emails_endpoints(chapter_id, email_contact),
+   subject text not NULL,
+  
+   body_text text NOT NULL, -- plaintext
+   body_html text, -- html variant of the body_text
+   watchHTML text, -- html specific for apple watch
+   amp text, -- message confirming to amp standard
+
+)
+
