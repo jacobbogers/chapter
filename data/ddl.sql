@@ -136,27 +136,39 @@ create table chapter_emails_endpoints
 (
     chapter_id uuid references chapters(id),
     email_contact text not null,
-    primary key(chapters_id, contact_email),
+    primary key(chapter_id, email_contact),
     contact_descr text not null, -- description for admin config panel 
     created_at timestamp default CURRENT_TIMESTAMP,
     updated_at timestamp default CURRENT_TIMESTAMP 
 );
 
+
 -- outgoing emails created per chapter
-create table emails_sent
+create table emails
 (
    id uuid,
    chapter_id uuid references chapters(id),
    email_sender text, -- address to display as sender 
    email_reply_to text, -- address to put in the reply too field
-   primary_key(uuid),
+   primary key(id),
    FOREIGN KEY (chapter_id, email_sender) REFERENCES chapter_emails_endpoints(chapter_id, email_contact),
+   FOREIGN KEY (chapter_id, email_reply_to) REFERENCES chapter_emails_endpoints(chapter_id, email_contact),
    subject text not NULL,
-  
    body_text text NOT NULL, -- plaintext
    body_html text, -- html variant of the body_text
    watchHTML text, -- html specific for apple watch
-   amp text, -- message confirming to amp standard
+   amp text -- message confirming to amp standard
+);
 
+create table email_user_sent
+(
+   message_id text, -- message id returned from node_mailer unqiuely identifying a singular email sent
+   email_message_id uuid,
+   user_id uuid, -- the user this email was sent
+   primary key(message_id),
+   foreign key (email_message_id) REFERENCES emails(id),
+   foreign key (user_id) REFERENCES users(id),
+   status text, -- email status, successfully posted, received, bounced, whatever 
+   created_at timestamp default CURRENT_TIMESTAMP,
+   updated_at timestamp default CURRENT_TIMESTAMP 
 )
-
