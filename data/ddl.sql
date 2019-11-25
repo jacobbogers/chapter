@@ -172,3 +172,30 @@ create table email_user_sent
    created_at timestamp default CURRENT_TIMESTAMP,
    updated_at timestamp default CURRENT_TIMESTAMP 
 )
+
+
+-- smtp configuration is stored in the DB and can be changed via an admin console
+-- nodemailer transport plugin are very specific to the transport, so they will need their own specific configuration
+--
+create table config_smtp (
+    port integer not null,
+    host text not null,
+    auth_type text, -- : string (in this case only support 'login') enum ('OAuth2', )
+    auth_user text, -- : string
+    auth_pass text -- : normal,
+    secure boolean default false,
+    -- tls no tls object
+    tls_servername text,
+    tls_ignoreTLS  boolean,
+    tls_requireTLS boolean,
+    tls_rejectUnauthorized boolean,  -- // do not fail on invalid certificates
+    
+    name text,
+    localAddress text
+    connectionTimeout integer,
+    greetingTimeout integer,
+    socketTimeout integer,
+    disableFileAccess boolean default TRUE,
+    disableUrlAccess boolean default TRUE
+)
+
